@@ -1,0 +1,17 @@
+version: '3'
+# This container is for DEV ENVIROMENT ONLY!!
+# For PROD ENV we pull the content from CDN
+services:
+  box-client:
+    container_name: boxes-client
+    build: 
+      context: .
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - 3000:3000
+    environment: 
+        - NODE_ENV=development
+    command: npm start
+    stdin_open: true

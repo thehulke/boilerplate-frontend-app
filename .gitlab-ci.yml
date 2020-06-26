@@ -1,0 +1,55 @@
+default:
+  image: node:12.16.2-alpine3.9
+
+stages:
+  - test
+  - build
+  - deploy
+
+test client: 
+  stage: test
+  rules:
+    - if: $CI_MERGE_REQUEST_ID               # Execute jobs in merge request context
+    - if: $CI_COMMIT_BRANCH == 'master'      # Execute jobs when a new commit is pushed to master branch
+  before_script:
+    - npm install
+  script:
+    - npm run test:ci
+  coverage: /All\sfiles.*?\s+(\d+.\d+)/
+  artifacts:
+    paths:
+      - ./node_modules
+  
+build client:
+   stage: build
+   rules:
+     - if: $CI_COMMIT_BRANCH == 'master'      # Execute jobs when a new commit is pushed to master branch
+   script:
+     - npm run build
+   artifacts:
+     paths:
+      - ./build
+     expire_in: 2 days
+     
+deploy client:
+  stage: deploy
+  image: ruby:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'      # Execute jobs when a new commit is pushed to master branch
+  before_script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+  script:
+    - dpl --provider=heroku --app=$HEROKU_APP_STAGING --api-key=$HEROKU_API_KEY
+# deploy client:
+#   stage: deploy
+#   image: python:latest
+#   rules:
+#      - if: $CI_COMMIT_BRANCH == 'master'      # Execute jobs when a new commit is pushed to master branch
+#   variables:
+#     AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+#     AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+#   script:
+#     - pip install awscli
+#     - aws s3 cp ./build s3://boxes-fe/ --recursive

@@ -1,0 +1,19 @@
+version: '3'
+# This container is for DEV ENVIROMENT ONLY!!
+# For PROD ENV we pull the content from CDN
+services:
+  box-client-prod:
+    expose:
+      - "5000"
+      - "9229"
+    container_name: boxes-client-prod
+    build:
+      context: .
+      dockerfile: ./Dockerfile.prod
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - 3001:90
+    environment: 
+      - NODE_ENV=production
+    command: service nginx start
