@@ -16,7 +16,7 @@
     "@types/react-dom": "16.9.4",
     "classnames": "^2.2.6",
     "clipboard-copy": "^3.1.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.23",
     "material-table": "^1.57.2",
     "moment": "^2.24.0",
     "notistack": "^0.9.7",
